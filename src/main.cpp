@@ -17,7 +17,7 @@
 //#define PxMATRIX_double_buffer true
 
 #include <PxMatrix.h>
-
+#include <FreeSansBoldOblique24pt7b.h>
 // Pins for LED MATRIX
 #ifdef ESP32
 
@@ -54,7 +54,7 @@ Ticker display_ticker;
 // the brighter the display. If too large the ESP will crash
 uint8_t display_draw_time=30; //30-70 is usually fine
 
-PxMATRIX display(64,32,P_LAT, P_OE,P_A,P_B,P_C);
+PxMATRIX display(64,32,P_LAT, P_OE,P_A,P_B,P_C,P_D);
 //PxMATRIX display(64,32,P_LAT, P_OE,P_A,P_B,P_C,P_D);
 //PxMATRIX display(64,64,P_LAT, P_OE,P_A,P_B,P_C,P_D,P_E);
 
@@ -62,7 +62,8 @@ PxMATRIX display(64,32,P_LAT, P_OE,P_A,P_B,P_C);
 uint16_t myRED = display.color565(255, 0, 0);
 uint16_t myGREEN = display.color565(0, 255, 0);
 uint16_t myBLUE = display.color565(0, 0, 255);
-uint16_t myWHITE = display.color565(255, 255, 255);
+//uint16_t myWHITE = display.color565(255, 255, 255);
+uint16_t myWHITE = display.color565(255, 230, 230);
 uint16_t myYELLOW = display.color565(255, 255, 0);
 uint16_t myCYAN = display.color565(0, 255, 255);
 uint16_t myMAGENTA = display.color565(255, 0, 255);
@@ -132,14 +133,15 @@ void setup() {
 
  Serial.begin(9600);
   // Define your display layout here, e.g. 1/8 step, and optional SPI pins begin(row_pattern, CLK, MOSI, MISO, SS)
-  display.begin(8);
+  //display.begin(16);
+  display.begin(16);
   //display.begin(8, 14, 13, 12, 4);
 
   // Define multiplex implemention here {BINARY, STRAIGHT} (default is BINARY)
   //display.setMuxPattern(BINARY);
 
   // Set the multiplex pattern {LINE, ZIGZAG,ZZAGG, ZAGGIZ, WZAGZIG, VZAG, ZAGZIG} (default is LINE)
-  //display.setScanPattern(LINE);
+  display.setScanPattern(LINE);
 
   // Rotate display
   //display.setRotate(true);
@@ -160,28 +162,43 @@ void setup() {
   // Set the time in microseconds that we pause after selecting each mux channel
   // (May help if some rows are missing / the mux chip is too slow)
   //display.setMuxDelay(0,1,0,0,0);
-  display.setMuxDelay(1,1,2,1,1); // test thla
+//  display.setMuxDelay(1,1,2,1,1); // test thla
 
   // Set the number of panels that make up the display area width (default is 1)
   //display.setPanelsWidth(2);
 
   // Set the brightness of the panels (default is 255)
-  display.setBrightness(100);
+//  display.setBrightness(100);
 
   // Set driver chip type
   //display.setDriverChip(FM6124);
 
+//  display.setFont(&FreeSansBoldOblique24pt7b);
   display.clearDisplay();
-//  display.setTextColor(myCYAN,0);
-display.setCursor(0,0);
-  display.print("one");
 
-  display.setCursor(0,8);
-  display.print("two");
+  display.setTextColor(myWHITE,0);
+//  display.setTextColor(myRED,0);
+  display.setCursor(0,0*8);
+  display.print("\x0e Select");
+//  display.setTextColor(myBLUE,0);
+  display.setCursor(0,1*8);
+//  display.print("two");
 
-//  display.setTextColor(myMAGENTA,0);
-  display.setCursor(0,16);
-  display.print("three");
+  display.setTextColor(myWHITE,0);
+  display.setCursor(1*8,2*8);
+  display.print("\xae Willy \xaf");
+
+  display.setTextColor(myWHITE,0);
+  display.setCursor(0*8,3*8);
+  // zon \x2a
+#if 0
+  display.drawPixel(0, 0, myRED);
+  display.drawPixel(0, 8, myBLUE);
+  display.drawPixel(0, 16, myGREEN);
+  display.drawPixel(0, 24, myWHITE);
+
+  display.fillRect(0,0, 64, 32,myRED);
+#endif
   display_update_enable(true);
 
   delay(3000);
@@ -241,7 +258,7 @@ void scroll_text(uint8_t ypos, unsigned long scroll_delay, String text, uint8_t 
 
 uint8_t icon_index=0;
 void loop() {
-    return;
+return;
   scroll_text(1,50,"Welcome to PxMatrix!",96,96,250);
   display.clearDisplay();
 
