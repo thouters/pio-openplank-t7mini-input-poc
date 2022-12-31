@@ -21,13 +21,13 @@
 // Pins for LED MATRIX
 #ifdef ESP32
 
-#define P_LAT 22
+#define P_LAT 17
 #define P_A 19
 #define P_B 23
 #define P_C 18
 #define P_D 5
 #define P_E 15
-#define P_OE 2
+#define P_OE 16 // 2
 hw_timer_t * timer = NULL;
 portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
 
