@@ -26,7 +26,8 @@
 #endif
 
 // You can have up to 4 on one i2c bus but one is enough for testing!
-Adafruit_MPR121 cap = Adafruit_MPR121();
+Adafruit_MPR121 cap1 = Adafruit_MPR121();
+Adafruit_MPR121 cap2 = Adafruit_MPR121();
 
 
 // Pins for LED MATRIX
@@ -63,7 +64,8 @@ Ticker display_ticker;
 
 // This defines the 'on' time of the display is us. The larger this number,
 // the brighter the display. If too large the ESP will crash
-uint8_t display_draw_time=30; //30-70 is usually fine
+//uint8_t display_draw_time=30; //30-70 is usually fine
+uint8_t display_draw_time=40; //30-70 is usually fine
 
 PxMATRIX display(64,32,P_LAT, P_OE,P_A,P_B,P_C,P_D);
 //PxMATRIX display(64,32,P_LAT, P_OE,P_A,P_B,P_C,P_D);
@@ -214,14 +216,20 @@ void setup() {
 
   delay(3000);
 
-  if (!cap.begin(0x5A)) {
-      Serial.println("MPR121 not found, check wiring?");
+  if (!cap1.begin(0x5A)) {
+      Serial.println("MPR121A not found, check wiring?");
       display.setCursor(0,0*8);
-      display.print("MPR121 Failure");
+      display.print("MPR121A Failure");
 
     while (1);
   }
   Serial.println("MPR121 found!");
+  if (!cap2.begin(0x5B)) {
+      Serial.println("MPR121B not found, check wiring?");
+      display.setCursor(0,0*8);
+      display.print("MPR121B Failure");
+    while (1);
+  }
 
 }
 union single_double{
@@ -278,14 +286,14 @@ void scroll_text(uint8_t ypos, unsigned long scroll_delay, String text, uint8_t 
 
 uint8_t icon_index=0;
 void loop() {
-uint16_t currtouched = cap.touched();
+    uint16_t currtouched = cap1.touched();
 
-  for (uint8_t i=0; i<12; i++) {
-    // it if *is* touched and *wasnt* touched before, alert!
-    if ((currtouched & _BV(i))  )
+
+    // last channel not connected
+  for (uint8_t i=0; i<11; i++)
+  {
+    if ((currtouched & _BV(i)))
     {
-       // draw box
-       // void fillRect(uint16_t x0, uint16_t y0, uint16_t w, uint16_t h, uint16_t color);
        display.fillRect(i*3, 0, 3, 32, myWHITE);
     }
     else
@@ -293,6 +301,20 @@ uint16_t currtouched = cap.touched();
        display.fillRect(i*3, 0, 3, 32, myBLACK);
     }
   }
+    currtouched = cap2.touched();
+    // first two channels not connected
+  for (uint8_t i=2; i<12; i++)
+  {
+    if ((currtouched & _BV(i)))
+    {
+       display.fillRect((11+1+12-2-i)*3, 0, 3, 32, myWHITE);
+    }
+    else
+    {
+       display.fillRect((11+1+12-2-i)*3, 0, 3, 32, myBLACK);
+    }
+  }
+
 return;
   scroll_text(1,50,"Welcome to PxMatrix!",96,96,250);
   display.clearDisplay();
