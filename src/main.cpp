@@ -18,6 +18,17 @@
 
 #include <PxMatrix.h>
 #include <FreeSansBoldOblique24pt7b.h>
+#include <Wire.h>
+#include "Adafruit_MPR121.h"
+
+#ifndef _BV
+#define _BV(bit) (1 << (bit))
+#endif
+
+// You can have up to 4 on one i2c bus but one is enough for testing!
+Adafruit_MPR121 cap = Adafruit_MPR121();
+
+
 // Pins for LED MATRIX
 #ifdef ESP32
 
@@ -203,6 +214,15 @@ void setup() {
 
   delay(3000);
 
+  if (!cap.begin(0x5A)) {
+      Serial.println("MPR121 not found, check wiring?");
+      display.setCursor(0,0*8);
+      display.print("MPR121 Failure");
+
+    while (1);
+  }
+  Serial.println("MPR121 found!");
+
 }
 union single_double{
   uint8_t two[2];
@@ -258,6 +278,21 @@ void scroll_text(uint8_t ypos, unsigned long scroll_delay, String text, uint8_t 
 
 uint8_t icon_index=0;
 void loop() {
+uint16_t currtouched = cap.touched();
+
+  for (uint8_t i=0; i<12; i++) {
+    // it if *is* touched and *wasnt* touched before, alert!
+    if ((currtouched & _BV(i))  )
+    {
+       // draw box
+       // void fillRect(uint16_t x0, uint16_t y0, uint16_t w, uint16_t h, uint16_t color);
+       display.fillRect(i*3, 0, 3, 32, myWHITE);
+    }
+    else
+    {
+       display.fillRect(i*3, 0, 3, 32, myBLACK);
+    }
+  }
 return;
   scroll_text(1,50,"Welcome to PxMatrix!",96,96,250);
   display.clearDisplay();
