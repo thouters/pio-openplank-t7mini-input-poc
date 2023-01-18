@@ -1,4 +1,4 @@
 [submodule "libs/PxMatrix"]
 	path = lib/PxMatrix
-	url = https://github.com/2dom/PxMatrix
-	branch = v1.8.2
+	url = https://github.com/thouters/PxMatrix
+	branch = v1.8.2-fix-ss-name-conflict
