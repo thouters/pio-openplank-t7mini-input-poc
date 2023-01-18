@@ -65,7 +65,7 @@ Ticker display_ticker;
 // This defines the 'on' time of the display is us. The larger this number,
 // the brighter the display. If too large the ESP will crash
 //uint8_t display_draw_time=30; //30-70 is usually fine
-uint8_t display_draw_time=40; //30-70 is usually fine
+uint8_t display_draw_time=60; //30-70 is usually fine
 
 PxMATRIX display(64,32,P_LAT, P_OE,P_A,P_B,P_C,P_D);
 //PxMATRIX display(64,32,P_LAT, P_OE,P_A,P_B,P_C,P_D);
@@ -192,14 +192,15 @@ void setup() {
   display.setTextColor(myWHITE,0);
 //  display.setTextColor(myRED,0);
   display.setCursor(0,0*8);
-  display.print("\x0e Select");
+  //display.print("\x0e Select");
+  display.print("Open");
 //  display.setTextColor(myBLUE,0);
   display.setCursor(0,1*8);
 //  display.print("two");
 
   display.setTextColor(myWHITE,0);
   display.setCursor(1*8,2*8);
-  display.print("\xae Willy \xaf");
+  display.print("    Plank");
 
   display.setTextColor(myWHITE,0);
   display.setCursor(0*8,3*8);
@@ -214,7 +215,7 @@ void setup() {
 #endif
   display_update_enable(true);
 
-  delay(3000);
+  delay(10000);
 
   if (!cap1.begin(0x5A)) {
       Serial.println("MPR121A not found, check wiring?");
